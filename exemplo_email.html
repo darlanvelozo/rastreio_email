@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fatura - Megalink Piauí</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .logo {
+            max-width: 200px;
+            height: auto;
+        }
+        .content {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .button {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .highlight {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <!-- IMAGEM RASTREADA - Substitua ID_DA_FATURA pelo ID real -->
+        <img src="http://127.0.0.1:5002/image/img1.png?id_fatura=123" 
+             alt="Logo Megalink Piauí" 
+             class="logo">
+        <h1>Fatura #ID_DA_FATURA</h1>
+        <p>Megalink Piauí - Soluções em Tecnologia</p>
+    </div>
+
+    <div class="content">
+        <h2>Olá, Cliente!</h2>
+        
+        <p>Informamos que sua fatura foi gerada e está disponível para visualização.</p>
+        
+        <div class="highlight">
+            <strong>📋 Detalhes da Fatura:</strong><br>
+            • Número: #ID_DA_FATURA<br>
+            • Data de Emissão: [DATA_ATUAL]<br>
+            • Valor: R$ [VALOR]<br>
+            • Vencimento: [DATA_VENCIMENTO]
+        </div>
+
+        <p>Para acessar sua fatura completa, clique no botão abaixo:</p>
+        
+        <a href="#" class="button">📄 Visualizar Fatura Completa</a>
+        
+        <p><strong>Importante:</strong> Esta fatura deve ser paga até a data de vencimento para evitar juros e multas.</p>
+    </div>
+
+    <div class="footer">
+        <p><strong>Megalink Piauí</strong></p>
+        <p>📧 contato@megalinkpiaui.com.br</p>
+        <p>📱 (86) 99999-9999</p>
+        <p>🌐 www.megalinkpiaui.com.br</p>
+        <p style="font-size: 0.8em; margin-top: 15px;">
+            Este e-mail foi enviado automaticamente. 
+            Para cancelar o recebimento, entre em contato conosco.
+        </p>
+    </div>
+
+    <!-- IMAGEM RASTREADA ADICIONAL - Para rastrear abertura do e-mail -->
+    <img src="http://localhost:5001/image/img1.png?id_fatura=ID_DA_FATURA" 
+         alt="" 
+         style="width: 1px; height: 1px; opacity: 0;"
+         width="1" height="1">
+</body>
+</html>
