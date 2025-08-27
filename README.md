@@ -72,23 +72,93 @@ GET /api/views/{id_fatura}
 ```
 Retorna todas as visualizações de uma fatura específica.
 
+### Empresas Disponíveis para Boletos
+```
+GET /api/empresas
+```
+Retorna lista de empresas e suas URLs base para boletos.
+
+### Visualizações de Boletos por Empresa
+```
+GET /api/boletos/{empresa}
+```
+Retorna todas as visualizações de boletos de uma empresa específica.
+
+## 💳 Sistema de Boletos
+
+O sistema inclui redirecionamento automático para boletos das empresas parceiras:
+
+### Rota de Redirecionamento
+```
+GET /boleto?empresa={empresa}&codigo={codigo_boleto}&id_fatura={id_fatura}
+```
+
+### Parâmetros
+- **empresa**: Nome da empresa (megalink ou bjfibra) - **Obrigatório**
+- **codigo**: Código único do boleto - **Obrigatório**
+- **id_fatura**: ID da fatura para rastreamento - **Opcional**
+
+### URLs Base das Empresas
+- **Megalink**: `https://api.megalinktelecom.hubsoft.com.br/pdf/fatura/`
+- **BJ Fibra**: `https://api.bjfibra.hubsoft.com.br/pdf/fatura/`
+
+### Exemplos de Uso
+
+#### Com ID da Fatura (para rastreamento)
+```
+https://seudominio.com/boleto?empresa=megalink&codigo=c42f66f6bc19678efa2a983f93170cb31ed23d0c6e1cefe03f72fe62cf5ea9b21f71e4e61850ef5c&id_fatura=FAT001
+```
+
+#### Sem ID da Fatura
+```
+https://seudominio.com/boleto?empresa=megalink&codigo=c42f66f6bc19678efa2a983f93170cb31ed23d0c6e1cefe03f72fe62cf5ea9b21f71e4e61850ef5c
+```
+
+**Nota**: Os acessos aos boletos são rastreados em tabela separada (`boleto_views`), independente do rastreamento de imagens.
+
 ## 📊 Dados Capturados
 
-Para cada visualização, o sistema registra:
+### Rastreamento de Imagens
+Para cada visualização de imagem, o sistema registra:
 - **ID da Fatura**: Identificador único da fatura
 - **Endereço IP**: IP do cliente que visualizou
 - **User Agent**: Navegador/dispositivo usado
 - **Referer**: Página de origem (se disponível)
 - **Timestamp**: Data e hora exata da visualização
 
+### Rastreamento de Boletos
+Para cada acesso a boleto, o sistema registra:
+- **Empresa**: Nome da empresa (megalink ou bjfibra)
+- **Código do Boleto**: Código único do boleto
+- **ID da Fatura**: Identificador da fatura (opcional)
+- **Endereço IP**: IP do cliente que acessou
+- **User Agent**: Navegador/dispositivo usado
+- **Referer**: Página de origem (se disponível)
+- **Timestamp**: Data e hora exata do acesso
+
 ## 🗄️ Estrutura do Banco de Dados
 
-O sistema usa PostgreSQL com a seguinte estrutura:
+O sistema usa PostgreSQL com as seguintes tabelas:
 
+### Tabela image_views (Rastreamento de Imagens)
 ```sql
 CREATE TABLE image_views (
     id SERIAL PRIMARY KEY,
     id_fatura VARCHAR(255) NOT NULL,
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    referer TEXT
+);
+```
+
+### Tabela boleto_views (Rastreamento de Boletos)
+```sql
+CREATE TABLE boleto_views (
+    id SERIAL PRIMARY KEY,
+    empresa VARCHAR(50) NOT NULL,
+    codigo_boleto VARCHAR(255) NOT NULL,
+    id_fatura VARCHAR(255),
     ip_address VARCHAR(45),
     user_agent TEXT,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

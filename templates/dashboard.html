@@ -187,13 +187,19 @@
 
         <div class="stats-grid">
             <div class="stat-card">
-                <h3>Total de Visualizações</h3>
-                <div class="stat-number">{{ total_views }}</div>
+                <h3>📊 Visualizações de Imagens</h3>
+                <div class="stat-number">{{ total_image_views }}</div>
                 <div class="stat-description">Imagens visualizadas pelos clientes</div>
             </div>
             
             <div class="stat-card">
-                <h3>Faturas Únicas</h3>
+                <h3>💳 Acessos a Boletos</h3>
+                <div class="stat-number">{{ total_boleto_views }}</div>
+                <div class="stat-description">Boletos acessados pelos clientes</div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>📋 Faturas Únicas</h3>
                 <div class="stat-number">{{ fatura_stats|length }}</div>
                 <div class="stat-description">Número de faturas rastreadas</div>
             </div>
@@ -209,7 +215,7 @@
         </div>
 
         <div class="section">
-            <h2>📈 Estatísticas por Fatura</h2>
+            <h2>📈 Estatísticas por Fatura (Imagens)</h2>
             <button class="refresh-btn" onclick="location.reload()">🔄 Atualizar</button>
             <div class="table-container">
                 <table>
@@ -236,7 +242,33 @@
         </div>
 
         <div class="section">
-            <h2>🕒 Visualizações Recentes</h2>
+            <h2>💳 Estatísticas por Empresa (Boletos)</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Empresa</th>
+                            <th>Acessos</th>
+                            <th>Primeiro Acesso</th>
+                            <th>Último Acesso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for empresa in boleto_empresa_stats %}
+                        <tr>
+                            <td><span class="fatura-id">{{ empresa[0].upper() }}</span></td>
+                            <td><strong>{{ empresa[1] }}</strong></td>
+                            <td class="timestamp">{{ empresa[2] }}</td>
+                            <td class="timestamp">{{ empresa[3] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🕒 Visualizações Recentes (Imagens)</h2>
             <div class="table-container">
                 <table>
                     <thead>
@@ -248,7 +280,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for view in recent_views %}
+                        {% for view in recent_image_views %}
                         <tr>
                             <td><span class="fatura-id">{{ view[0] }}</span></td>
                             <td>{{ view[1] }}</td>
@@ -262,12 +294,74 @@
         </div>
 
         <div class="section">
+            <h2>💳 Acessos Recentes (Boletos)</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Empresa</th>
+                            <th>Código Boleto</th>
+                            <th>ID Fatura</th>
+                            <th>IP</th>
+                            <th>Data/Hora</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for view in recent_boleto_views %}
+                        <tr>
+                            <td><span class="fatura-id">{{ view[0].upper() }}</span></td>
+                            <td><code>{{ view[1][:20] }}{% if view[1]|length > 20 %}...{% endif %}</code></td>
+                            <td>{{ view[2] or 'N/A' }}</td>
+                            <td>{{ view[3] }}</td>
+                            <td class="timestamp">{{ view[4] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section">
             <h2>🔗 APIs Disponíveis</h2>
             <p>Use estas APIs para integrar com outros sistemas:</p>
             <ul style="margin-left: 20px; margin-top: 10px;">
-                <li><strong>/api/stats</strong> - Estatísticas gerais em JSON</li>
+                <li><strong>/api/stats</strong> - Estatísticas gerais em JSON (imagens + boletos)</li>
                 <li><strong>/api/views/&lt;id_fatura&gt;</strong> - Visualizações de uma fatura específica</li>
+                <li><strong>/api/empresas</strong> - Lista empresas disponíveis para boletos</li>
+                <li><strong>/api/boletos/&lt;empresa&gt;</strong> - Visualizações de boletos de uma empresa</li>
             </ul>
+        </div>
+
+        <div class="section">
+            <h2>💳 Sistema de Boletos</h2>
+            <p>Redirecionamento automático para boletos das empresas:</p>
+            <div class="url-example">
+                <strong>Formato:</strong> /boleto?empresa={empresa}&codigo={codigo_boleto}&id_fatura={id_fatura}
+            </div>
+            <div style="margin: 15px 0;">
+                <h4>Parâmetros:</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>empresa:</strong> Obrigatório (megalink ou bjfibra)</li>
+                    <li><strong>codigo:</strong> Obrigatório (código único do boleto)</li>
+                    <li><strong>id_fatura:</strong> Opcional (para rastreamento)</li>
+                </ul>
+            </div>
+            <div style="margin: 15px 0;">
+                <h4>Empresas Disponíveis:</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Megalink:</strong> https://api.megalinktelecom.hubsoft.com.br/pdf/fatura/</li>
+                    <li><strong>BJ Fibra:</strong> https://api.bjfibra.hubsoft.com.br/pdf/fatura/</li>
+                </ul>
+            </div>
+            <div class="url-example">
+                <strong>Exemplo com fatura:</strong> /boleto?empresa=megalink&codigo=c42f66f6bc19678efa2a983f93170cb31ed23d0c6e1cefe03f72fe62cf5ea9b21f71e4e61850ef5c&id_fatura=FAT001
+            </div>
+            <div class="url-example">
+                <strong>Exemplo sem fatura:</strong> /boleto?empresa=megalink&codigo=c42f66f6bc19678efa2a983f93170cb31ed23d0c6e1cefe03f72fe62cf5ea9b21f71e4e61850ef5c
+            </div>
+            <p style="margin-top: 15px; font-size: 0.9em; color: #666;">
+                <strong>Nota:</strong> Os acessos aos boletos são rastreados em tabela separada, independente das imagens.
+            </p>
         </div>
     </div>
 
